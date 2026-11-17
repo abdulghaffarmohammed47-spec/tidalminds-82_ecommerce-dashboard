@@ -1,0 +1,173 @@
+version: '3.8'
+
+services:
+  # -----------------------------------
+  # PostgreSQL with pgvector extension
+  # -----------------------------------
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: smart_ecommerce_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin123}
+      POSTGRES_DB: ${DB_NAME:-ecommerce_db}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema:/docker-entrypoint-initdb.d # Auto-run schema scripts
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d ecommerce_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -----------------------------------
+  # MongoDB
+  # -----------------------------------
+  mongodb:
+    image: mongo:7.0
+    container_name: smart_ecommerce_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin123}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-ecommerce_mongo}
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -----------------------------------
+  # Redis
+  # -----------------------------------
+  redis:
+    image: redis:7.0-alpine
+    container_name: smart_ecommerce_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -----------------------------------
+  # FastAPI Backend
+  # -----------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_ecommerce_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://admin:admin123@postgres:5432/ecommerce_db
+      - MONGO_URL=mongodb://admin:admin123@mongodb:27017/?authSource=admin
+      - MONGO_DB=ecommerce_mongo
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=${JWT_SECRET:-supersecretkey}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  # -----------------------------------
+  # Transactional outbox worker
+  # -----------------------------------
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_ecommerce_worker
+    command: ["python", "-m", "app.workers.run_outbox_worker"]
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://admin:admin123@postgres:5432/ecommerce_db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  # -----------------------------------
+  # React Frontend (Vite)
+  # -----------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smart_ecommerce_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # -----------------------------------
+  # Prometheus (Metrics Collection)
+  # -----------------------------------
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: smart_ecommerce_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # -----------------------------------
+  # Grafana (Dashboards & Visualization)
+  # -----------------------------------
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: smart_ecommerce_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:

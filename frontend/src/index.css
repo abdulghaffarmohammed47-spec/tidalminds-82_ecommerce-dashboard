@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 320px;
+    background: #f6f7fb;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 8% 0%, rgba(111, 91, 255, 0.1), transparent 26rem),
+      radial-gradient(circle at 92% 18%, rgba(20, 184, 166, 0.08), transparent 24rem),
+      #f6f7fb;
+    color: #172033;
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  button,
+  input {
+    font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    margin-top: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  button {
+    border: 0;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible {
+    outline: 3px solid rgba(84, 51, 235, 0.38);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .market-home {
+    width: min(100%, 1280px);
+    padding-top: 1.25rem;
+  }
+
+  .market-hero {
+    min-height: 430px;
+    padding: 4.5rem clamp(1.25rem, 5vw, 5rem) 3.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(84, 51, 235, 0.14);
+    border-radius: 2rem;
+    background:
+      linear-gradient(120deg, rgba(255, 255, 255, 0.94), rgba(247, 244, 255, 0.9)),
+      radial-gradient(circle at 84% 18%, rgba(20, 184, 166, 0.18), transparent 18rem);
+    box-shadow: 0 22px 70px rgba(38, 32, 88, 0.1);
+  }
+
+  .market-hero::after {
+    position: absolute;
+    right: -7rem;
+    bottom: -8rem;
+    width: 22rem;
+    height: 22rem;
+    border: 1px solid rgba(84, 51, 235, 0.16);
+    border-radius: 50%;
+    content: '';
+    box-shadow: 0 0 0 2rem rgba(84, 51, 235, 0.04), 0 0 0 4rem rgba(84, 51, 235, 0.025);
+    pointer-events: none;
+  }
+
+  .market-hero h1 {
+    max-width: 760px;
+    font-family: 'Space Grotesk', 'DM Sans', sans-serif;
+    font-size: clamp(2.6rem, 6vw, 5.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+  }
+
+  .market-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .market-hero form {
+    width: min(100%, 680px);
+  }
+
+  .market-hero form input {
+    min-width: 0;
+  }
+
+  .market-section {
+    padding: 0.5rem 0;
+  }
+
+  .market-section h2,
+  .market-feature-grid h3 {
+    font-family: 'Space Grotesk', 'DM Sans', sans-serif;
+  }
+
+  .market-category-section {
+    padding-top: 1.5rem;
+  }
+
+  .market-category-rail {
+    scrollbar-width: none;
+  }
+
+  .market-category-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .market-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    align-items: stretch;
+  }
+
+  .market-product-card {
+    min-width: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(31, 41, 55, 0.1);
+  }
+
+  .market-product-card img {
+    background: #eef1f5;
+  }
+
+  .market-feature-grid > div {
+    min-height: 210px;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  @media (max-width: 900px) {
+    .market-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .market-home {
+      padding-inline: 0.75rem;
+    }
+
+    .market-hero {
+      min-height: 390px;
+      padding: 3.25rem 1rem 2.5rem;
+      border-radius: 1.5rem;
+    }
+
+    .market-hero h1 {
+      font-size: clamp(2.35rem, 12vw, 3.5rem);
+    }
+
+    .market-hero form > div {
+      padding-left: 0.75rem;
+    }
+
+    .market-hero form input {
+      font-size: 0.82rem;
+    }
+
+    .market-hero form button {
+      width: 2.65rem;
+      height: 2.65rem;
+    }
+
+    .market-product-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
+
+@layer base {
+  :root {
+    /* Colors */
+    --color-canvas-mist: #f2f4f5;
+    --color-pure-white: #ffffff;
+    --color-ink-black: #000000;
+    --color-faint-border: #ebebeb;
+    --color-muted-gray: #787574;
+    --color-cool-stone: #cccccc;
+    --color-warm-fog: #acb0aa;
+    --color-shop-violet: #5433eb;
+    --color-violet-wash: #c0b5f3;
+    --color-slate-ink: #332f2d;
+    --color-ash-veil: #665a54;
+
+    /* Typography Scale & Tracking (GT Standard system) */
+    --font-gt-standard: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --text-caption: 11px;
+    --tracking-caption: -0.017em;
+    --text-body-sm: 12px;
+    --tracking-body-sm: -0.017em;
+    --text-body: 14px;
+    --tracking-body: -0.014em;
+    --text-body-lg: 16px;
+    --tracking-body-lg: -0.031em;
+    --text-display: 20px;
+    --tracking-display: -0.05em;
+
+    /* Spacing */
+    --spacing-section: 64px;
+    --spacing-element: 12px;
+
+    /* Radii */
+    --radius-cards: 28px;
+    --radius-inner-image: 20px;
+    --radius-pill: 9999px;
+
+    /* Elevation Shadows */
+    --shadow-card-soft: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+    --shadow-pill-subtle: rgba(0, 0, 0, 0.06) 0px 2px 8px 0px;
+    --shadow-violet-glow: rgba(69, 36, 219, 0.34) 0px 4px 24px 0px;
+  }
+}
+
+@theme {
+  --color-canvas-mist: #f2f4f5;
+  --color-pure-white: #ffffff;
+  --color-ink-black: #000000;
+  --color-faint-border: #ebebeb;
+  --color-muted-gray: #787574;
+  --color-cool-stone: #cccccc;
+  --color-warm-fog: #acb0aa;
+  --color-shop-violet: #5433eb;
+  --color-violet-wash: #c0b5f3;
+  --color-slate-ink: #332f2d;
+  --color-ash-veil: #665a54;
+
+  --font-gt: 'GT Standard', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --radius-cards: 28px;
+  --radius-inner-img: 20px;
+  --radius-pill: 9999px;
+
+  --shadow-card: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+  --shadow-violet: rgba(69, 36, 219, 0.34) 0px 4px 24px 0px;
+  --shadow-pill: rgba(0, 0, 0, 0.06) 0px 2px 8px 0px;
+}

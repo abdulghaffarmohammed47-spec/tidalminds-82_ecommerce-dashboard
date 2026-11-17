@@ -1,0 +1,23 @@
+@theme {
+  --color-canvas-mist: #f2f4f5;
+  --color-pure-white: #ffffff;
+  --color-ink-black: #000000;
+  --color-faint-border: #ebebeb;
+  --color-muted-gray: #787574;
+  --color-cool-stone: #cccccc;
+  --color-warm-fog: #acb0aa;
+  --color-shop-violet: #5433eb;
+  --color-violet-wash: #c0b5f3;
+  --color-slate-ink: #332f2d;
+  --color-ash-veil: #665a54;
+
+  --font-gt: 'GT Standard', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --radius-cards: 28px;
+  --radius-inner-img: 20px;
+  --radius-pill: 9999px;
+
+  --shadow-card: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+  --shadow-violet: rgba(69, 36, 219, 0.34) 0px 4px 24px 0px;
+  --shadow-pill: rgba(0, 0, 0, 0.06) 0px 2px 8px 0px;
+}
